@@ -4,23 +4,24 @@ using namespace std;
 
 class carte{
     private:
-        int pagini, anEditura, imprumut, zI, lI, aI, zR, lR, aR;
-        string titlu, autor, editor, calitate;
+        int pagini, anEditura, imprumut;
+        string titlu, autor, editor, calitate, I, R;
         bool Im;
     public:
         carte(){
             titlu = "Necunoscut";
             autor = "Necunoscut";
-            editor = "Necunoscut";
+            editor = "Necunoscut";  
             anEditura = 0;
             calitate = "Nou";
             pagini = 0;
             imprumut = 0;
             Im = false;
-            zI = 0; lI = 0; aI = 0;
-            zR = 0; lR = 0; aR = 0;
+            I = "0/0/0";
+            R = "0/0/0";
         }
-        carte(string t, string z, string e, int a, string q, int p, int i, bool u, int c, int y, int o, int C, int Y, int O){
+        carte(string t, string z, string e, int a, 
+            string q, int p, int i, bool u, string b, string r){
             titlu = t;
             autor = z;
             editor = e;
@@ -29,8 +30,8 @@ class carte{
             pagini = p;
             imprumut = i;
             Im = u;
-            zI = c; lI = y; aI = o;
-            zR = C; lR = Y; aR = O;
+            I = b;
+            R = r;
         }
         carte(const carte &c){
             titlu = c.titlu;
@@ -41,41 +42,38 @@ class carte{
             pagini = c.pagini;
             imprumut = c.imprumut;
             Im = c.Im;
+            I = c.I;
+            R = c.R;
         }
         ~carte(){
-            cout << "Carte scoasa din biblioteca";
+            cout << "Carte scoasa din biblioteca" << endl;
         }
         void afisareC(){
             cout << "Cartea: " << titlu << endl;
             cout << "Autor: " << autor << endl;
             cout << "Editura: " << editor << endl;
             cout << "Anul editiei: " << anEditura << endl;
+            cout << "Numarul de pagini: " << pagini << endl;
             cout << endl;
         }
         void afisareI(){
             cout << "Informatie recenta:" << endl;
             if(Im){
-                cout << "Imprumutata - " << zI << "/" << lI << "/" << aI << endl; 
+                cout << "Imprumutata - " << I <<  endl; 
             }else{
-                cout << "Returnata - " << zR << "/" << lR << "/" << aR << endl;
+                cout << "Returnata - " << R << endl;
             }
             cout << "Calitatea la imprumut: " << calitate << endl;
             cout << "Imprumutata de " << imprumut << " ori" << endl;
             cout << endl;
         }
         void imp(){
-            cout << "Data imprumutului: " << endl;
-            cout << "Ziua: "; cin >> zI;
-            cout << "Luna: "; cin >> lI;
-            cout << "Anul: "; cin >> aI;
+            cout << "Data imprumutului: "; cin >> I;
             Im = true;
             cout << endl;
         }
         void returnare(){
-            cout << "Data returnarii: " << endl;
-            cout << "Ziua: "; cin >> zR;
-            cout << "Luna: "; cin >> lR;
-            cout << "Anul: "; cin >> aR;
+            cout << "Data returnarii: "; cin >> R;
             cout << "Cartea a fost returnata" << endl;
             imprumut++;
             imprumut<10 ? calitate = "Buna" : calitate = "Nesatisfacatoare";
@@ -134,7 +132,7 @@ void menu(carte &c){
 
 int main(){
     carte c1;
-    carte c2("Albania mare", "Contel Aldon", "Drinca", 2020, "Buna", 225, 6, false, 0, 0, 0, 23, 8, 2026);
+    carte c2("Albania mare", "Contel Aldon", "Drinca", 2020, "Buna", 225, 9, false, "0/0/0", "23/8/2026");
     carte c3(c2);
     int z;
     bool q = true;
