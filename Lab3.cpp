@@ -1,7 +1,6 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <vector>
 using namespace std;
 
 class Rezervare{
@@ -13,43 +12,40 @@ class Rezervare{
         int durRez = 2;
         int pret;
     public:
-        Rezervare(){
-            cout << "Rezervare adaugata." << endl;
+        Rezervare(){cout << "Rezervare adaugata." << endl;}
+        virtual ~Rezervare(){cout << "Rezervare stearsa." << endl;}
+        void setClient(string x){client = x;}
+        void setData(string x){data = x;}
+        void setOra(string x){ora = x;}
+        void setNrPers(int x){nrPers = x;}
+        string getClient(){return client;}
+        string getData(){return data;}
+        string getOra(){return ora;}
+        int getNrPers(){return nrPers;}
+        virtual void afiseazaInfo(){
+            cout << "   Nume: " << getClient() << endl;
+            cout << "   Data: " << getData() << endl;
+            cout << "   Ora: " << getOra() << endl;
+            cout << "   Numarul de persoane: " << getNrPers() << endl;
+            cout << endl;
         }
-        ~Rezervare(){
-            cout << "Rezervare stearsa." << endl;
-        }
-        void setRezervare(string a, string b, string c, int d){
-            client = a;
-            data = b;
-            ora = c;
-            nrPers = d;
-        }
-        string getClient(){
-            return client;
-        }
-        string getData(){
-            return data;
-        }
-        string getOra(){
-            return ora;
-        }
-        int getNrPers(){
-            return nrPers;
-        }
-        void durataRez(){
+        virtual void durataRez(){
             cout << "Durata rezervarii: " << durRez << "ore" << endl;
         }
-        void pretCalc(){
+        virtual void pretCalc(){
             pret = nrPers * 30;
             cout << "Pretul rezarvarii: " << pret << "lei" << endl;
         }
 };
 
-class Zilnica : public Rezervare{
+class RezervareZilnica : public Rezervare{
     public:
-        Zilnica(){
+        RezervareZilnica(){
             cout << "Tip: Zilnica." << endl;
+        }
+        void afiseaza(){
+            cout << "Informatia rezervarii:" << endl;
+            cout << "   Tip: Zilnic" << endl;
         }
         void pretCalc(){
             pret = 50 + 20 * (nrPers - 2);
@@ -57,10 +53,14 @@ class Zilnica : public Rezervare{
         }
 };
 
-class OcazieSpeciala : public Rezervare{
+class RezervareOcazieSpeciala : public Rezervare{
     public:
-        OcazieSpeciala(){
+        RezervareOcazieSpeciala(){
             cout << "Tip: Ocazie speciala" << endl;
+        }
+        void afiseaza(){
+            cout << "Informatia rezervarii:" << endl;
+            cout << "   Tip: Ocazie speciala" << endl;
         }
         void pretCalc(){
             pret = 200 + 60 * (durRez - 2);
@@ -68,10 +68,14 @@ class OcazieSpeciala : public Rezervare{
         }
 };
 
-class GrupMare : public Rezervare{
+class RezervareGrupMare : public Rezervare{
     public:
-        GrupMare(){
+        RezervareGrupMare(){
             cout << "Tip: Grup mare" << endl;
+        }
+        void afiseaza(){
+            cout << "Informatia rezervarii:" << endl;
+            cout << "   Tip: Grup mare" << endl;
         }
         void pretCalc(){
             pret = 500 + 10 * (nrPers - 20);
@@ -79,10 +83,14 @@ class GrupMare : public Rezervare{
         }
 };
 
-class VIP : public Rezervare{
+class RezervareVIP : public Rezervare{
     public:
-        VIP(){
+        RezervareVIP(){
             cout << "Tip: VIP" << endl;
+        }
+        void afiseaza(){
+            cout << "Informatia rezervarii:" << endl;
+            cout << "   Tip: VIP" << endl;
         }
         void pretCalc(){
             pret = 1000;
@@ -90,26 +98,60 @@ class VIP : public Rezervare{
         }
 };
 
+struct node {
+    Rezervare *R; 
+    node *prev;
+    node *next;
+};
+node *head = NULL;
+
+node* getNewNode(Rezervare *x){
+    node *newNode = new node; //allocate a dynamic memory in the heap
+    newNode->R = x;
+    newNode->prev = NULL;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void InsertAtHead(Rezervare *x){
+    node *newNode = getNewNode(x);
+    if (head == NULL){
+        head =  newNode;
+        return;
+    }
+    
+    newNode->next = head;
+    head->prev = newNode;
+    head = newNode;    
+}
+
 int main(){
     ifstream Fi("Rezervare.txt");
-    string a, b, c;
-    int d;
-    vector<class Rezervare> R;
-    Rezervare rez;
-    
-    if (!Fi.is_open()) {
-        cout << "Error: could not open file!" << endl;
+    if(!Fi){
+        cout << "Eroare: fisierul nu a fost gasit!" << endl;
         return 1;
     }
-    for(int i; i<3; i++){
-        Fi >> a >> b >> c >> d;
-        rez.setRezervare(a, b, c, d);
-        R.push_back(rez);
-    }
-    cout << R[0].getClient() << endl;
-    cout << R[1].getClient() << endl;
-    cout << R[2].getClient() << endl;
     
+    string a, b, c;
+    int d;
+    while(Fi >> a >> b >> c >> d){
+        Rezervare* R = new Rezervare();
+        R->setClient(a);
+        R->setData(b);
+        R->setOra(c);
+        R->setNrPers(d);
+        InsertAtHead(R);
+    }
+
+    if(head) cout << head->R->getClient() << endl;
+
+    node* curr = head;
+    while(curr){
+        node* next = curr->next;
+        delete curr->R;
+        delete curr;
+        curr = next;
+    }
     Fi.close();
     return 0;
 }
