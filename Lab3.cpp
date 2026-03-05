@@ -1,10 +1,12 @@
 #include <iostream>
+#include <fstream>
 #include <string>
+#include <vector>
 using namespace std;
 
 class Rezervare{
     protected:
-        string Client;
+        string client;
         string data;
         string ora;
         int nrPers;
@@ -12,10 +14,28 @@ class Rezervare{
         int pret;
     public:
         Rezervare(){
-            cout << "Rezervare adaugata.";
+            cout << "Rezervare adaugata." << endl;
         }
         ~Rezervare(){
             cout << "Rezervare stearsa." << endl;
+        }
+        void setRezervare(string a, string b, string c, int d){
+            client = a;
+            data = b;
+            ora = c;
+            nrPers = d;
+        }
+        string getClient(){
+            return client;
+        }
+        string getData(){
+            return data;
+        }
+        string getOra(){
+            return ora;
+        }
+        int getNrPers(){
+            return nrPers;
         }
         void durataRez(){
             cout << "Durata rezervarii: " << durRez << "ore" << endl;
@@ -69,3 +89,27 @@ class VIP : public Rezervare{
             cout << "Pretul rezarvarii: " << pret << "lei" << endl;
         }
 };
+
+int main(){
+    ifstream Fi("Rezervare.txt");
+    string a, b, c;
+    int d;
+    vector<class Rezervare> R;
+    Rezervare rez;
+    
+    if (!Fi.is_open()) {
+        cout << "Error: could not open file!" << endl;
+        return 1;
+    }
+    for(int i; i<3; i++){
+        Fi >> a >> b >> c >> d;
+        rez.setRezervare(a, b, c, d);
+        R.push_back(rez);
+    }
+    cout << R[0].getClient() << endl;
+    cout << R[1].getClient() << endl;
+    cout << R[2].getClient() << endl;
+    
+    Fi.close();
+    return 0;
+}
