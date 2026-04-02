@@ -1,23 +1,33 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <vector>
 using namespace std;
 
-class Rezervare{
+class IRezervare{
+    public:
+        virtual int durataRezervarii(){return 0;}
+        virtual int pretCalc(){return 0;}
+        virtual ~IRezervare(){}
+};
+
+class Rezervare : public IRezervare{
     protected:
         string tipRezervare, client, data;
-        int oraIntrare, minuteIntrare, oraIesire, minuteIesire, nrPers, pret;
+        int oraIntrare, minuteIntrare, oraIesire, minuteIesire, nrPers;
     public:
-        Rezervare(){cout << "Rezervare adaugata." << endl;}
-        virtual ~Rezervare(){cout << "Rezervare stearsa." << endl;}
-        void setTipRezervare(string x){tipRezervare = x;}
-        void setClient(string x){client = x;}
-        void setData(string x){data = x;}
-        void setOraIntrare(int x){oraIntrare = x;}
-        void setMinuteIntrare(int x){minuteIntrare = x;}
-        void setOraIesire(int x){oraIesire = x;}
-        void setMinuteIesire(int x){minuteIesire = x;}
-        void setNrPers(int x){nrPers = x;}
+        Rezervare(string z, string a, string b, int c, int d, int e, int f, int g){
+            tipRezervare = z;
+            client = a;
+            data = b; 
+            oraIntrare = c; 
+            minuteIntrare = d;
+            oraIesire = e; 
+            minuteIesire = f; 
+            nrPers = g;
+            cout << "Rezervare adaugata." << endl;
+        }
+        virtual ~Rezervare(){}
         string getTipRezervare(){return tipRezervare;}
         string getClient(){return client;}
         string getData(){return data;}
@@ -28,170 +38,90 @@ class Rezervare{
         int getNrPers(){return nrPers;}
 
         virtual void afiseazaInfo(){
+            cout << endl;
+            cout << "=====================================================" << endl;
             cout << "Tip rezervare: " << getTipRezervare() << endl;
             cout << "   Nume: " << getClient() << endl;
             cout << "   Data: " << getData() << endl;
             cout << "   Ora: " << getOraIntrare() << ":" << getMinuteIntrare() << " -> "
                 << getOraIesire() << ":" << getMinuteIesire() << endl;
-            cout << "   Durata rezervarii: ";
-                if (durataOra() > 0)
-                    cout << durataOra() << " ore ";
-                if (durataMinute() > 0)
-                    cout << durataMinute() << " minute";
-                cout << endl;
+            cout << "   Rezervat pentru: " << durataRezervarii() << " ore" << endl;
             cout << "   Numarul de persoane: " << getNrPers() << endl;
-            pretCalc();
-            cout << endl;
+            cout << "   Pretul rezervarii: " << pretCalc() << "lei" << endl;
+            cout << "=====================================================" << endl;
         }
 
-        virtual void citire(string z, string a, string b, int c, int d, int e, int f, int g){
-            setTipRezervare(z);
-            setClient(a);
-            setData(b);
-            setOraIntrare(c);
-            setMinuteIntrare(d);
-            setOraIesire(e);
-            setMinuteIesire(f);
-            setNrPers(g);
+        int pretCalc() override{
+            int pret = nrPers * 30;
+            return pret;
         }
 
-        virtual void pretCalc(){
-            pret = nrPers * 30;
-            cout << "   Pretul rezarvarii: " << pret << "lei" << endl;
-        }
-
-        int durataRezervarii(){
+        int durataRezervarii() override{
             int intrare, iesire, durata;
             intrare = oraIntrare*3600 + minuteIntrare*60;
             iesire = oraIesire*3600 + minuteIesire*60;
-            durata = iesire-intrare;
-            return durata;
-        }
-        int durataOra(){
-            int durata = durataRezervarii()/3600;
-            return durata;
-        }
-        int durataMinute(){
-            int durata = durataRezervarii()/60-durataOra()*60;
+            durata = (iesire-intrare)/60;
+            if(durata % 60 != 0)durata = durata/60+1;
+            else durata /= 60;
             return durata;
         }
 };
 
 class RezervareZilnica : public Rezervare{
     public:
-        RezervareZilnica(){
-            cout << "Tip: Zilnica." << endl;
-        }
-        void pretCalc(){
+        RezervareZilnica(string z, string a, string b, int c, int d, int e, int f, int g) 
+            : Rezervare(z, a, b, c, d, e, f, g){cout << "Tip: Zilnica." << endl;}
+        int pretCalc() override{
+            int pret;
             if(nrPers > 2) pret = 50 + 20 * (nrPers - 2);
             else pret = 50;
-            cout << "Pretul rezarvarii: " << pret << "lei" << endl;
+            return pret;
         }
 };
 
 class RezervareOcazieSpeciala : public Rezervare{
     public:
-        RezervareOcazieSpeciala(){
-            cout << "Tip: Ocazie speciala" << endl;
-        }
-        void pretCalc(){
-            if(durataOra()>2) pret = 200 + 60 * (durataOra() - 2);
+        RezervareOcazieSpeciala(string z, string a, string b, int c, int d, int e, int f, int g) 
+            : Rezervare(z, a, b, c, d, e, f, g){cout << "Tip: Ocazie speciala" << endl;}
+        int pretCalc() override{
+            int pret;
+            if(durataRezervarii()>2) pret = 200 + 60 * (durataRezervarii() - 2);
             else pret = 200;
-            cout << "Pretul rezarvarii: " << pret << "lei" << endl; 
+            return pret;
         }
 };
 
 class RezervareGrupMare : public Rezervare{
     public:
-        RezervareGrupMare(){
-            cout << "Tip: Grup mare" << endl;
-        }
-        void pretCalc(){
+        RezervareGrupMare(string z, string a, string b, int c, int d, int e, int f, int g) 
+            : Rezervare(z, a, b, c, d, e, f, g){cout << "Tip: Grup mare" << endl;}
+        int pretCalc() override{
+            int pret;
             if(nrPers>20) pret = 500 + 10 * (nrPers - 20);
             else pret = 500;
             if(nrPers>30) pret *=0.85; 
-            cout << "Pretul rezarvarii: " << pret << "lei" << endl;
+            return pret;
         }
 };
 
 class RezervareVIP : public Rezervare{
     public:
-        RezervareVIP(){
-            cout << "Tip: VIP" << endl;
-        }
-        void pretCalc(){
+        RezervareVIP(string z, string a, string b, int c, int d, int e, int f, int g)
+            : Rezervare(z, a, b, c, d, e, f, g){cout << "Tip: VIP." << endl;}
+        int pretCalc() override{
+            int pret;
             if(nrPers>5) pret = 1000 + 200*(nrPers-5);
             else pret = 1000;
-            pret *= durataOra() + float(durataMinute()/60);
-            cout << "Pretul rezarvarii: " << pret << "lei" << endl;
+            pret *= durataRezervarii();
+            return pret;
         }
 };
 
-struct node {
-    Rezervare *R; 
-    node *prev;
-    node *next;
-};
-node *head = NULL;
-
-node* getNewNode(Rezervare *x){
-    node *newNode = new node;
-    newNode->R = x;
-    newNode->prev = NULL;
-    newNode->next = NULL;
-    return newNode;
-}
-
-void InsertAtHead(Rezervare *x){
-    node *newNode = getNewNode(x);
-    if (head == NULL){
-        head =  newNode;
-        return;
+void afiseaza(vector<Rezervare*> R){
+    for(int i=0; i<R.size(); i++){
+        R.at(i)->afiseazaInfo();
+        delete R.at(i);
     }
-    newNode->next = head;
-    head->prev = newNode;
-    head = newNode;    
-}
-
-void Interfata(node* head){
-    int y;
-    do{
-        cout << endl;
-        cout << "1) Datele rezervarii" << endl;
-        cout << "2) Rezervarea urmatoare" << endl;
-        cout << "3) Rezervarea precedenta" << endl;
-        cout << "4) Iesire din program" << endl;
-        cout << "   Selectati una dintre optiuni: ";
-        cin >> y;
-        cout << endl;
-        switch(y){
-            case 1:{
-                head->R->afiseazaInfo();
-                break;
-            }
-            case 2:{
-                if(head->next != NULL) head = head->next;
-                else cout << "Nu mai sunt rezervari" << endl;
-                break;
-            }
-            case 3:{
-                if(head->prev != NULL) head = head->prev;
-                else cout << "Ati ajuns la inceput de lista" << endl;
-                break;
-            }
-            case 4:{
-                node* curr = head;
-                while(curr){
-                    node* next = curr->next;
-                    delete curr->R;
-                    delete curr;
-                    curr = next;
-                }
-                break;
-            }
-            default: {cout << "Functie ne-existenta" << endl;}
-        }
-    }while(y!=4);
 }
 
 int main(){
@@ -200,29 +130,23 @@ int main(){
         cout << "Eroare: fisierul nu a fost gasit!" << endl;
         return 1;
     }
+
+    vector<Rezervare*> R;    
+    string z, a, b, c, d;
+    int e;
     
-    string a, b, z;
-    int c, d, e, f, g;
-    while(Fi >> z >> a >> b >> c >> d >> e >> f >> g){
+    while(Fi >> z >> a >> b >> c >> d >> e){
         if(z == "RezervareZilnica"){
-            Rezervare* R = new RezervareZilnica();
-            R->citire(z, a, b, c, d, e, f, g);
-            InsertAtHead(R);
+            R.push_back(new RezervareZilnica(z, a, b, stoi(c.substr(0, 2)), stoi(c.substr(3, 2)), stoi(d.substr(0, 2)), stoi(d.substr(3, 2)), e));
         } else if(z == "RezervareOcazieSpeciala"){
-            Rezervare* R = new RezervareOcazieSpeciala();
-            R->citire(z, a, b, c, d, e, f, g);
-            InsertAtHead(R);
+            R.push_back(new RezervareOcazieSpeciala(z, a, b, stoi(c.substr(0, 2)), stoi(c.substr(3, 2)), stoi(d.substr(0, 2)), stoi(d.substr(3, 2)), e));
         } else if(z == "RezervareGrupMare"){
-            Rezervare* R = new RezervareGrupMare();
-            R->citire(z, a, b, c, d, e, f, g);
-            InsertAtHead(R);
+            R.push_back(new RezervareGrupMare(z, a, b, stoi(c.substr(0, 2)), stoi(c.substr(3, 2)), stoi(d.substr(0, 2)), stoi(d.substr(3, 2)), e));
         } else if(z == "RezervareVIP"){
-            Rezervare* R = new RezervareVIP();
-            R->citire(z, a, b, c, d, e, f, g);
-            InsertAtHead(R);
+            R.push_back(new RezervareVIP(z, a, b, stoi(c.substr(0, 2)), stoi(c.substr(3, 2)), stoi(d.substr(0, 2)), stoi(d.substr(3, 2)), e));
         }  
     }
-    Interfata(head);
+    afiseaza(R);
 
     Fi.close();
     return 0;
