@@ -4,12 +4,14 @@
 #include <string>
 #include <vector>
 using namespace std;
+
 class Cont{
     protected:
         int ID;
         string nume;
         float sold;
         vector<string> tranzactie;
+
     public:
         Cont(){
             ID = 0;
@@ -21,15 +23,18 @@ class Cont{
             ID = a; nume = b; sold = c; tranzactie = d;
         }
         ~Cont(){}
+
         void setId(int x){ID = x;}
         void setNume(string x){nume = x;}
         void setSold(float x){sold = x;}
         void setTranzactie(vector<string> x){tranzactie = x;}
+
         int getID(){return ID;}
         string getNume(){return nume;}
         float getSold(){return sold;}
         vector<string> getTranzactie(){return tranzactie;}
         string getTranzactieI(int i){return tranzactie[i];}
+
         void depuneBani(float suma){
             sold += suma;
             cout << "Depunerea a fost efectuata cu succes" << endl;
@@ -40,6 +45,7 @@ class Cont{
             s = buf;
             tranzactie.push_back(s);
         }
+
         void retrageBani(float suma){
             if(suma <= sold){
                 sold -= suma;
@@ -54,6 +60,7 @@ class Cont{
                 cout << "Fonduri insuficiente" << endl << endl;
             }
         }
+
         void trimiteBani(int idDestinatie, vector<Cont> &C){
             for(int i=0; i<C.size(); i++){
                 if(idDestinatie == C[i].getID()){
@@ -77,16 +84,19 @@ class Cont{
             }
             cout << "ID invalid." << endl << endl;
         }
+
         void verificaSold(){
             cout << "Sold: " << sold << endl;
             cout << endl;
         }
+
         void vizualizeazaTranzactii(){
             for(int i = 0; i < tranzactie.size(); i++){
                 cout << i+1 << ") " << tranzactie[i] << endl;
             }
             cout << endl;
         }
+
         void blocheazaCont(int a, vector<Cont> &C){
             for(int i=0; i<C.size(); i++){
                 if(C[i].getID() == a){
@@ -98,6 +108,7 @@ class Cont{
             }
         }
 };
+
 void citire(ifstream &Fi, vector<Cont> &C){
     int a; string b; float c; int n;
     while(Fi >> a){
@@ -115,6 +126,7 @@ void citire(ifstream &Fi, vector<Cont> &C){
     }
     Fi.close();
 }
+
 void scriere(ofstream &Fo, vector<Cont> &C){
     for(int i = 0; i < C.size(); i++){
         Fo << C[i].getID() << '\n';
@@ -128,6 +140,7 @@ void scriere(ofstream &Fo, vector<Cont> &C){
     }
     Fo.close();
 }
+
 void interfata(int a, vector<Cont> &C){
     int x;
     do{
@@ -196,6 +209,7 @@ void interfata(int a, vector<Cont> &C){
         }
     }while(true);
 }
+
 void inregistrare(vector<Cont> &C){
     Cont A;
     int a; string b;
@@ -215,6 +229,7 @@ void inregistrare(vector<Cont> &C){
     cout << endl;
     interfata(C.size()-1, C);
 }
+
 void autentificare(vector<Cont> &C){
     int id, index = -1;
     cout << "Introduceti ID-ul contului: ";
@@ -227,6 +242,7 @@ void autentificare(vector<Cont> &C){
         cout << endl;
     }
 }
+
 void menu(vector<Cont> &C){
     int x;
     do{
@@ -253,12 +269,17 @@ void menu(vector<Cont> &C){
         }
     }while(true); 
 }
+
 int main(){
     vector<Cont> C;
+
     ifstream Fi("conturi.txt");
     citire(Fi, C);
+
     menu(C);
+
     ofstream Fo("conturi.txt");
     scriere(Fo, C);
+
     return 0;
 }
