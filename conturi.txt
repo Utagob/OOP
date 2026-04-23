@@ -1,0 +1,12 @@
+654
+Alexei
+460
+2
+Depunere bani -> suma: 50.000000
+Transfer -> persoana Trada -> suma -> 90.000000
+987
+Trada
+5734
+2
+Depunere bani -> suma: 5648.000000
+Retragere bani -> suma: 69.000000
