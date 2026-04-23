@@ -1,12 +1,6 @@
 654
 Alexei
-460
+900
 2
-Depunere bani -> suma: 50.000000
-Transfer -> persoana Trada -> suma -> 90.000000
-987
-Trada
-5734
-2
-Depunere bani -> suma: 5648.000000
-Retragere bani -> suma: 69.000000
+Depunere bani -> suma: 1500.00 => sold: 1500.00
+Retragere bani -> suma: 600.00 => sold: 900.00
